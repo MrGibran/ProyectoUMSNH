@@ -4,6 +4,12 @@
  */
 package proyectoumnsh;
 
+import Opciones.Abonar;
+import Opciones.Consultar;
+import Opciones.Retirar;
+import VerClientes.AltaClientes;
+import VerClientes.BajaClientes;
+
 /**
  *
  * @author glzgi
@@ -42,12 +48,27 @@ public class Menu extends javax.swing.JFrame {
         jMnuOpciones.setText("Opciones");
 
         jMntAbonar.setText("Abonar");
+        jMntAbonar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMntAbonarActionPerformed(evt);
+            }
+        });
         jMnuOpciones.add(jMntAbonar);
 
         jMntRetirar.setText("Reitrar");
+        jMntRetirar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMntRetirarActionPerformed(evt);
+            }
+        });
         jMnuOpciones.add(jMntRetirar);
 
         jMntConsultar.setText("Consultar");
+        jMntConsultar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMntConsultarActionPerformed(evt);
+            }
+        });
         jMnuOpciones.add(jMntConsultar);
 
         jMnBPrincipal.add(jMnuOpciones);
@@ -66,6 +87,11 @@ public class Menu extends javax.swing.JFrame {
         jMnuVerCliente.add(jMntAltaCliente);
 
         jMntBajaCliente.setText("Baja");
+        jMntBajaCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMntBajaClienteActionPerformed(evt);
+            }
+        });
         jMnuVerCliente.add(jMntBajaCliente);
 
         jMntConsultarClientes.setText("Consultar");
@@ -97,11 +123,45 @@ public class Menu extends javax.swing.JFrame {
 
     private void jMntAltaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMntAltaClienteActionPerformed
         // TODO add your handling code here:
+        AltaClientes verFormulario = new AltaClientes ();
+        verFormulario.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_jMntAltaClienteActionPerformed
 
     private void jMntConsultarClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMntConsultarClientesActionPerformed
         // TODO add your handling code here:
+        Consultar verFormulario = new Consultar ();
+        verFormulario.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_jMntConsultarClientesActionPerformed
+
+    private void jMntAbonarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMntAbonarActionPerformed
+        // TODO add your handling code here:
+        Abonar verFormulario = new Abonar ();
+        verFormulario.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_jMntAbonarActionPerformed
+
+    private void jMntRetirarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMntRetirarActionPerformed
+        // TODO add your handling code here:
+        Retirar verFormulario = new Retirar ();
+        verFormulario.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_jMntRetirarActionPerformed
+
+    private void jMntConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMntConsultarActionPerformed
+        // TODO add your handling code here:
+        Consultar verFormulario = new Consultar ();
+        verFormulario.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_jMntConsultarActionPerformed
+
+    private void jMntBajaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMntBajaClienteActionPerformed
+        // TODO add your handling code here:
+        BajaClientes verFormulario = new BajaClientes ();
+        verFormulario.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_jMntBajaClienteActionPerformed
 
     /**
      * @param args the command line arguments
