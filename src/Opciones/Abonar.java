@@ -4,6 +4,13 @@
  * and open the template in the editor.
  */
 package Opciones;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 import proyectoumnsh.Menu;
 
@@ -12,12 +19,28 @@ import proyectoumnsh.Menu;
  * @author RONALDO
  */
 public class Abonar extends javax.swing.JFrame {
-
+    private ResultSet consulta; //variable que guardará el resultado de la consulta
+    private PreparedStatement pst; //variable que ejecutará las sentencias a la B.D.
+    private Connection conexion=null; //variable que llevará a cabo la conexión a la B.D.
+    private String genero; //variable que almacenará el caracter del género del alumno
+    private String Monto, Motivo;
     /**
      * Creates new form Abonar
      */
     public Abonar() {
         initComponents();
+    try //manejo de interrupciones
+        {
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            //se registra el controlador de MySql
+            conexion=DriverManager.getConnection("jdbc:mysql://auth-db628.hostinger.com/u523670221_Banco", "u523670221_general", "AGTT.MbdD3bpJ#d");
+            //se realiza la conexion mediante la dirección URL, integrada por el tipo de 
+            //controlador, la ubicación de la B.D., el usuario y la contraseña para ingresar
+        }
+        catch(SQLException e) //si existe algún error, esta parte lo captura y administra
+        {
+            JOptionPane.showMessageDialog(null, e.toString());//se muestra el error generado 
+        }
     }
 
     /**
@@ -35,8 +58,8 @@ public class Abonar extends javax.swing.JFrame {
         jTxtMonto = new javax.swing.JTextField();
         jTxtMotivo = new javax.swing.JTextField();
         jBtnAceptar = new javax.swing.JButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
+        jMnbOpciones = new javax.swing.JMenuBar();
+        jMn1Menu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -63,6 +86,11 @@ public class Abonar extends javax.swing.JFrame {
         jBtnAceptar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jBtnAceptarMouseClicked(evt);
+            }
+        });
+        jBtnAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnAceptarActionPerformed(evt);
             }
         });
 
@@ -101,10 +129,10 @@ public class Abonar extends javax.swing.JFrame {
                 .addContainerGap(45, Short.MAX_VALUE))
         );
 
-        jMenu1.setText("Opciones");
-        jMenu1.addActionListener(new java.awt.event.ActionListener() {
+        jMn1Menu.setText("Opciones");
+        jMn1Menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenu1ActionPerformed(evt);
+                jMn1MenuActionPerformed(evt);
             }
         });
 
@@ -114,11 +142,11 @@ public class Abonar extends javax.swing.JFrame {
                 jMenuItem1ActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        jMn1Menu.add(jMenuItem1);
 
-        jMenuBar1.add(jMenu1);
+        jMnbOpciones.add(jMn1Menu);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(jMnbOpciones);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -136,14 +164,12 @@ public class Abonar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBtnAceptarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtnAceptarMouseClicked
- VentanaAbonar ventana = new VentanaAbonar();
- ventana.setVisible(true);
- this.dispose();
+
     }//GEN-LAST:event_jBtnAceptarMouseClicked
 
-    private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
+    private void jMn1MenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMn1MenuActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jMenu1ActionPerformed
+    }//GEN-LAST:event_jMn1MenuActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
@@ -151,6 +177,36 @@ public class Abonar extends javax.swing.JFrame {
         verFormulario.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jBtnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAceptarActionPerformed
+     int resultado;
+        try
+        {      
+            pst=conexion.prepareStatement("INSERT INTO `Movimientos` (`idMovimientos`, `idUsuarios`, `motivo`, `fecha`, `hora`, `cantidad`) VALUES (NULL, '2', 'Bonos', '2022-06-15', '08:29:10', '1000')");
+            
+              
+            //ResultSetMetaData metaDatos = consulta.getMetaData();
+              
+            //int numeroColumnas=metaDatos.getColumnCount();
+              
+            //while (consulta.next()) //evaluación para moverse dentro los registros de la consulta
+            //    {
+            //        System.out.println("Id " + consulta.getInt(1) + " " + consulta.getString(2)+ " " + consulta.getString(3)+ " " + consulta.getString(4));
+            //    }
+          resultado=pst.executeUpdate();
+          if (resultado==1)
+               JOptionPane.showMessageDialog(null,"El abono ha sido insertado correctamente");
+            else
+                JOptionPane.showMessageDialog(null,"El abono No ha sido insertado");
+            
+          
+        }
+        catch(SQLException e)
+        {
+            JOptionPane.showMessageDialog(null, e.toString());  
+        }
+   
+    }//GEN-LAST:event_jBtnAceptarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -191,9 +247,9 @@ public class Abonar extends javax.swing.JFrame {
     private javax.swing.JButton jBtnAceptar;
     private javax.swing.JLabel jLblMonto;
     private javax.swing.JLabel jLblMotivo;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenu jMn1Menu;
+    private javax.swing.JMenuBar jMnbOpciones;
     private javax.swing.JPanel jPnlAbonar;
     private javax.swing.JTextField jTxtMonto;
     private javax.swing.JTextField jTxtMotivo;
