@@ -4,17 +4,44 @@
  */
 package proyectoumnsh;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author glzgi
  */
 public class LogIn extends javax.swing.JFrame {
+    
+    private ResultSet consulta; //variable que guardará el resultado de la consulta
+    private PreparedStatement pst; //variable que ejecutará las sentencias a la B.D.
+    private Connection conexion=null; //variable que llevará a cabo la conexión a la B.D.
+    private String genero; //variable que almacenará el caracter del género del alumno
+    private DefaultTableModel modelo = new DefaultTableModel();
 
     /**
      * Creates new form LogIn
      */
     public LogIn() {
         initComponents();
+        try //manejo de interrupciones
+        {
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            //se registra el controlador de MySql
+            conexion=DriverManager.getConnection("jdbc:mysql://auth-db628.hostinger.com/u523670221_Banco", "u523670221_general", "AGTT.MbdD3bpJ#d");
+            //se realiza la conexion mediante la dirección URL, integrada por el tipo de 
+            //controlador, la ubicación de la B.D., el usuario y la contraseña para ingresar
+        }
+        catch(SQLException e) //si existe algún error, esta parte lo captura y administra
+        {
+            JOptionPane.showMessageDialog(null, e.toString());//se muestra el error generado 
+        }
     }
 
     /**
@@ -107,7 +134,24 @@ public class LogIn extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBtnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEntrarActionPerformed
-        // TODO add your handling code here:
+        // Probara la connecion con la base de datos:
+        try
+        { 
+            String test;
+              pst=conexion.prepareStatement("SELECT * FROM Usuarios");
+              consulta=pst.executeQuery(); //se ejecuta la consulta a la B.D.
+              ResultSetMetaData metaDatos = consulta.getMetaData();
+              int numeroColumnas=metaDatos.getColumnCount();
+
+              JOptionPane.showMessageDialog(null,consulta);
+              //pst.setString(1,jTxtPorNombre.getText().trim());
+          
+        }
+        catch(SQLException e)
+        {
+            JOptionPane.showMessageDialog(null, e.toString());  
+        }
+        
     }//GEN-LAST:event_jBtnEntrarActionPerformed
 
     /**
