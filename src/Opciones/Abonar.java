@@ -179,33 +179,54 @@ public class Abonar extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jBtnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAceptarActionPerformed
-     int resultado;
-        try
-        {      
-            pst=conexion.prepareStatement("INSERT INTO `Movimientos` (`idMovimientos`, `idUsuarios`, `motivo`, `fecha`, `hora`, `cantidad`) VALUES (NULL, '2', 'Bonos', '2022-06-15', '08:29:10', '1000')");
-            
-              
-            //ResultSetMetaData metaDatos = consulta.getMetaData();
-              
-            //int numeroColumnas=metaDatos.getColumnCount();
-              
-            //while (consulta.next()) //evaluación para moverse dentro los registros de la consulta
-            //    {
-            //        System.out.println("Id " + consulta.getInt(1) + " " + consulta.getString(2)+ " " + consulta.getString(3)+ " " + consulta.getString(4));
-            //    }
-          resultado=pst.executeUpdate();
-          if (resultado==1)
-               JOptionPane.showMessageDialog(null,"El abono ha sido insertado correctamente");
-            else
-                JOptionPane.showMessageDialog(null,"El abono No ha sido insertado");
-            
-          
+
+        Monto = jTxtMonto.getText();
+        Motivo = jTxtMotivo.getText();
+        
+        if (Monto.isEmpty()) {
+          JOptionPane.showMessageDialog(null, "Motivo esta vacio");
         }
-        catch(SQLException e)
-        {
-            JOptionPane.showMessageDialog(null, e.toString());  
+        else{
+            int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro de insertar "+Monto+"el abono?", "Confirmacion", JOptionPane.YES_NO_OPTION);
+            
+            System.out.println(input);
+            
+            if (input == 0) {
+                        try
+                   {      
+                       int resultado;
+                       String sql;
+
+                       sql = "INSERT INTO `Movimientos` (`idMovimientos`, `idUsuarios`, `motivo`, `fecha`, `hora`, `cantidad`) "
+                               + "VALUES "
+                               + "(NULL, '2', '"+Motivo+"', CURRENT_DATE, CURRENT_TIME, '"+Monto+"')";
+                       pst=conexion.prepareStatement(sql);
+
+                     resultado=pst.executeUpdate();
+                     if (resultado==1) 
+                     {
+                         JOptionPane.showMessageDialog(null,"El abono ha sido insertado correctamente");
+                         jTxtMonto.setText(null);
+                         jTxtMotivo.setText(null);
+                         // 0=yes, 1=no, 2=cancel
+                   System.out.println(input);
+                     }
+
+                     else
+                     {
+                         JOptionPane.showMessageDialog(null,"El abono No ha sido insertado"); 
+                     }
+
+
+                   }
+                   catch(SQLException e)
+                   {
+                       JOptionPane.showMessageDialog(null, e.toString());  
+                   }
+            }
+               
         }
-   
+        
     }//GEN-LAST:event_jBtnAceptarActionPerformed
 
     /**
