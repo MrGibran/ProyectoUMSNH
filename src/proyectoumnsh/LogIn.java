@@ -163,10 +163,10 @@ public class LogIn extends javax.swing.JFrame {
                 if (consulta.next() == false) {
                     JOptionPane.showMessageDialog(null,"Usuario o contraseña incorrectas");
                 }else{
-                    while (consulta.next()) //evaluación para moverse dentro los registros de la consulta
-                    {
-                        System.out.println("Id " + consulta.getInt(1) + " " + consulta.getString(2)+ " " + consulta.getString(3)+ " " + consulta.getString(4));
-                    }
+                    Menu verFormulario = new Menu ();
+                    verFormulario.setVisible(true);
+                    this.setVisible(false);
+                    
                 }
                 
                 
