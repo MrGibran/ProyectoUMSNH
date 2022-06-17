@@ -155,7 +155,7 @@ public class LogIn extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null,"Hay valores vacios");
             } else{
                 //se crea la sentecia mysql para insertar
-                sql = "SELECT * FROM Usuarios WHERE Usuarios = '"+usuario+"' && Password = '"+contrasena+"';";
+                sql = "SELECT * FROM Admin WHERE Usuario = '"+usuario+"' && Password = '"+contrasena+"';";
                 pst=conexion.prepareStatement(sql);
                 consulta=pst.executeQuery(); //se ejecuta la consulta a la B.D.
                 
