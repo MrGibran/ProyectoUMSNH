@@ -126,7 +126,7 @@ public class Abonar extends javax.swing.JFrame {
                     .addComponent(jTxtMotivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(72, 72, 72)
                 .addComponent(jBtnAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         jMn1Menu.setText("Opciones");
@@ -187,7 +187,7 @@ public class Abonar extends javax.swing.JFrame {
           JOptionPane.showMessageDialog(null, "Motivo esta vacio");
         }
         else{
-            int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro de insertar "+Monto+"el abono?", "Confirmacion", JOptionPane.YES_NO_OPTION);
+            int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro que quieres abonar: "+Monto+" ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
             
             System.out.println(input);
             
@@ -197,9 +197,9 @@ public class Abonar extends javax.swing.JFrame {
                        int resultado;
                        String sql;
 
-                       sql = "INSERT INTO `Movimientos` (`idMovimientos`, `idUsuarios`, `motivo`, `fecha`, `hora`, `cantidad`) "
+                       sql = "INSERT INTO `Movimientos` (`idMovimientos`, `idUsuarios`,`Tipo`, `descripcion`, `fecha`, `hora`, `cantidad`) "
                                + "VALUES "
-                               + "(NULL, '2', '"+Motivo+"', CURRENT_DATE, CURRENT_TIME, '"+Monto+"')";
+                               + "(NULL, '2','Ingreso ', '"+Motivo+"', CURRENT_DATE, CURRENT_TIME, '"+Monto+"')";
                        pst=conexion.prepareStatement(sql);
 
                      resultado=pst.executeUpdate();
@@ -208,8 +208,6 @@ public class Abonar extends javax.swing.JFrame {
                          JOptionPane.showMessageDialog(null,"El abono ha sido insertado correctamente");
                          jTxtMonto.setText(null);
                          jTxtMotivo.setText(null);
-                         // 0=yes, 1=no, 2=cancel
-                   System.out.println(input);
                      }
 
                      else
@@ -224,6 +222,14 @@ public class Abonar extends javax.swing.JFrame {
                        JOptionPane.showMessageDialog(null, e.toString());  
                    }
             }
+            
+                if(input ==1 )
+                   {
+                     jTxtMonto.setText(null);
+                     jTxtMotivo.setText(null);
+                     jTxtMonto.requestFocus();
+                     
+                   }
                
         }
         
