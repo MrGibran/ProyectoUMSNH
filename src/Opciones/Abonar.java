@@ -5,6 +5,7 @@
  */
 package Opciones;
 import java.awt.List;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import proyectoumnsh.Menu;
@@ -26,11 +29,13 @@ public class Abonar extends javax.swing.JFrame {
     private Connection conexion=null; //variable que llevará a cabo la conexión a la B.D.
     private String genero; //variable que almacenará el caracter del género del alumno
     private String Monto, Motivo;
+    private int seleccion;
     /**
      * Creates new form Abonar
      */
     public Abonar() {
         initComponents();
+        llenarComboBox();
     try //manejo de interrupciones
         {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
@@ -43,8 +48,11 @@ public class Abonar extends javax.swing.JFrame {
         {
             JOptionPane.showMessageDialog(null, e.toString());//se muestra el error generado 
         }
+    
+    
+    
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -61,7 +69,7 @@ public class Abonar extends javax.swing.JFrame {
         jTxtMotivo = new javax.swing.JTextField();
         jBtnAceptar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        jCmbCliente = new javax.swing.JComboBox<>();
         jMnbOpciones = new javax.swing.JMenuBar();
         jMn1Menu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -84,6 +92,12 @@ public class Abonar extends javax.swing.JFrame {
         jLblMotivo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLblMotivo.setText("Motivo:");
 
+        jTxtMonto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtMontoKeyTyped(evt);
+            }
+        });
+
         jBtnAceptar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jBtnAceptar.setForeground(new java.awt.Color(0, 51, 51));
         jBtnAceptar.setText("Aceptar");
@@ -100,23 +114,22 @@ public class Abonar extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Cliente:");
+        jLabel1.setText("N Cliente:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jCmbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout jPnlAbonarLayout = new javax.swing.GroupLayout(jPnlAbonar);
         jPnlAbonar.setLayout(jPnlAbonarLayout);
         jPnlAbonarLayout.setHorizontalGroup(
             jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPnlAbonarLayout.createSequentialGroup()
-                .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(22, 22, 22)
+                .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPnlAbonarLayout.createSequentialGroup()
-                        .addGap(32, 32, 32)
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jCmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPnlAbonarLayout.createSequentialGroup()
-                        .addGap(22, 22, 22)
                         .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLblMotivo, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
                             .addComponent(jLblMonto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -136,7 +149,7 @@ public class Abonar extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jCmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(28, 28, 28)
                 .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTxtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -203,6 +216,9 @@ public class Abonar extends javax.swing.JFrame {
 
         Monto = jTxtMonto.getText();
         Motivo = jTxtMotivo.getText();
+        seleccion = jCmbCliente.getSelectedIndex()+1;
+        
+        System.out.println(seleccion);
         
         if (Monto.isEmpty()) {
           JOptionPane.showMessageDialog(null, "Motivo esta vacio");
@@ -210,7 +226,7 @@ public class Abonar extends javax.swing.JFrame {
         else{
             int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro que quieres abonar: "+Monto+" ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
             
-            System.out.println(input);
+            //System.out.println(input);
             
             if (input == 0) {
                         try
@@ -220,7 +236,7 @@ public class Abonar extends javax.swing.JFrame {
 
                        sql = "INSERT INTO `Movimientos` (`idMovimientos`, `idUsuarios`,`Tipo`, `descripcion`, `fecha`, `hora`, `cantidad`) "
                                + "VALUES "
-                               + "(NULL, '2','Ingreso ', '"+Motivo+"', CURRENT_DATE, CURRENT_TIME, '"+Monto+"')";
+                               + "(NULL, '"+seleccion+"','Ingreso ', '"+Motivo+"', CURRENT_DATE, CURRENT_TIME, '"+Monto+"')";
                        pst=conexion.prepareStatement(sql);
 
                      resultado=pst.executeUpdate();
@@ -255,6 +271,20 @@ public class Abonar extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_jBtnAceptarActionPerformed
+
+    private void jTxtMontoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtMontoKeyTyped
+        // TODO add your handling code here:
+        char letra = evt.getKeyChar(); // se obtiene el caracter de la tecla presioanada
+        
+        if (Character.isDigit(letra) || evt.getKeyChar()== KeyEvent.VK_BACK_SPACE) {
+            //si secumple alguna de las 2 condidiones se despliega el numero o se borra el numero tecleado 
+        }else {
+        
+            evt.consume();
+            getToolkit().beep();
+            
+        }
+    }//GEN-LAST:event_jTxtMontoKeyTyped
 
     /**
      * @param args the command line arguments
@@ -293,7 +323,7 @@ public class Abonar extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnAceptar;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jCmbCliente;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLblMonto;
     private javax.swing.JLabel jLblMotivo;
@@ -304,4 +334,36 @@ public class Abonar extends javax.swing.JFrame {
     private javax.swing.JTextField jTxtMonto;
     private javax.swing.JTextField jTxtMotivo;
     // End of variables declaration//GEN-END:variables
+
+    private void llenarComboBox() {
+ 
+        jCmbCliente.removeAllItems();
+        
+        try //manejo de interrupciones
+        {
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            //se registra el controlador de MySql
+            conexion=DriverManager.getConnection("jdbc:mysql://auth-db628.hostinger.com/u523670221_Banco", "u523670221_general", "AGTT.MbdD3bpJ#d");
+            //se realiza la conexion mediante la dirección URL, integrada por el tipo de 
+            //controlador, la ubicación de la B.D., el usuario y la contraseña para ingresar
+        }
+        catch(SQLException e) //si existe algún error, esta parte lo captura y administra
+        {
+            JOptionPane.showMessageDialog(null, e.toString());//se muestra el error generado 
+        }
+        
+        try {
+            pst=conexion.prepareStatement("SELECT * FROM Usuarios");
+            consulta=pst.executeQuery();
+            
+            while (consulta.next()){
+                //System.out.println( consulta.getInt(1));
+                jCmbCliente.addItem(Integer.toString(consulta.getInt(1)));
+            }
+            
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }        
+       
+    }
 }
