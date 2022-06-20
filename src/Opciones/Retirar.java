@@ -4,13 +4,25 @@
  * and open the template in the editor.
  */
 package Opciones;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import proyectoumnsh.Menu;
 
 /**
  *
  * @author RONALDO
  */
 public class Retirar extends javax.swing.JFrame {
-
+    private ResultSet consulta; //variable que guardará el resultado de la consulta
+    private PreparedStatement pst; //variable que ejecutará las sentencias a la B.D.
+    private Connection conexion=null; //variable que llevará a cabo la conexión a la B.D.
+    private String genero; //variable que almacenará el caracter del género del alumno
+    private String Monto, Motivo;
     /**
      * Creates new form Retirar
      */
@@ -32,7 +44,10 @@ public class Retirar extends javax.swing.JFrame {
         jLblMotivo = new javax.swing.JLabel();
         jTxtMonto = new javax.swing.JTextField();
         jTxtMotivo = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        jBntAceptar = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -47,12 +62,17 @@ public class Retirar extends javax.swing.JFrame {
         jLblMotivo.setForeground(new java.awt.Color(255, 255, 255));
         jLblMotivo.setText("Motivo:");
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(0, 51, 51));
-        jButton1.setText("Aceptar");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jBntAceptar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jBntAceptar.setForeground(new java.awt.Color(0, 51, 51));
+        jBntAceptar.setText("Aceptar");
+        jBntAceptar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                jBntAceptarMouseClicked(evt);
+            }
+        });
+        jBntAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBntAceptarActionPerformed(evt);
             }
         });
 
@@ -75,7 +95,7 @@ public class Retirar extends javax.swing.JFrame {
                                 .addComponent(jTxtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPnlRetirarLayout.createSequentialGroup()
                         .addGap(149, 149, 149)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jBntAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(140, Short.MAX_VALUE))
         );
         jPnlRetirarLayout.setVerticalGroup(
@@ -90,9 +110,28 @@ public class Retirar extends javax.swing.JFrame {
                     .addComponent(jLblMotivo)
                     .addComponent(jTxtMotivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(71, 71, 71)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addComponent(jBntAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(43, Short.MAX_VALUE))
         );
+
+        jMenu1.setText("Opciones");
+        jMenu1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu1ActionPerformed(evt);
+            }
+        });
+
+        jMenuItem1.setText("Ir a menu");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuBar1.add(jMenu1);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -109,11 +148,74 @@ public class Retirar extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-  VentanaRetirar ventana = new VentanaRetirar();
-  ventana.setVisible(true);
-  this.dispose();
-    }//GEN-LAST:event_jButton1MouseClicked
+    private void jBntAceptarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBntAceptarMouseClicked
+ 
+    }//GEN-LAST:event_jBntAceptarMouseClicked
+
+    private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
+
+    }//GEN-LAST:event_jMenu1ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    Menu verFormulario = new Menu();
+        verFormulario.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jBntAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBntAceptarActionPerformed
+        Monto = jTxtMonto.getText();
+        Motivo = jTxtMotivo.getText();
+        
+        if (Monto.isEmpty()) {
+          JOptionPane.showMessageDialog(null, "Motivo esta vacio");
+        }
+        else{
+            int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro que quieres Retirar: "+Monto+" ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
+            
+            System.out.println(input);
+            
+            if (input == 0) {
+                        try
+                   {      
+                       int resultado;
+                       String sql;
+
+                       sql = "INSERT INTO `Movimientos` (`idMovimientos`, `idUsuarios`, `motivo`, `fecha`, `hora`, `cantidad`) "
+                               + "VALUES "
+                               + "(NULL, '2', '"+Motivo+"', CURRENT_DATE, CURRENT_TIME, '"+Monto+"')";
+                       pst=conexion.prepareStatement(sql);
+
+                     resultado=pst.executeUpdate();
+                     if (resultado==1) 
+                     {
+                         JOptionPane.showMessageDialog(null,"El abono ha sido insertado correctamente");
+                         jTxtMonto.setText(null);
+                         jTxtMotivo.setText(null);
+                     }
+
+                     else
+                     {
+                         JOptionPane.showMessageDialog(null,"El abono No ha sido insertado"); 
+                     }
+
+
+                   }
+                   catch(SQLException e)
+                   {
+                       JOptionPane.showMessageDialog(null, e.toString());  
+                   }
+            }
+            
+                if(input ==1 )
+                   {
+                     jTxtMonto.setText(null);
+                     jTxtMotivo.setText(null);
+                     jTxtMonto.requestFocus();
+                     
+                   }
+               
+        }
+    }//GEN-LAST:event_jBntAceptarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -151,9 +253,12 @@ public class Retirar extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jBntAceptar;
     private javax.swing.JLabel jLblMonto;
     private javax.swing.JLabel jLblMotivo;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPnlRetirar;
     private javax.swing.JTextField jTxtMonto;
     private javax.swing.JTextField jTxtMotivo;

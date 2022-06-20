@@ -4,6 +4,15 @@
  * and open the template in the editor.
  */
 package Opciones;
+import java.awt.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Arrays;
+import javax.swing.JOptionPane;
 
 import proyectoumnsh.Menu;
 
@@ -12,12 +21,28 @@ import proyectoumnsh.Menu;
  * @author RONALDO
  */
 public class Abonar extends javax.swing.JFrame {
-
+    private ResultSet consulta; //variable que guardará el resultado de la consulta
+    private PreparedStatement pst; //variable que ejecutará las sentencias a la B.D.
+    private Connection conexion=null; //variable que llevará a cabo la conexión a la B.D.
+    private String genero; //variable que almacenará el caracter del género del alumno
+    private String Monto, Motivo;
     /**
      * Creates new form Abonar
      */
     public Abonar() {
         initComponents();
+    try //manejo de interrupciones
+        {
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            //se registra el controlador de MySql
+            conexion=DriverManager.getConnection("jdbc:mysql://auth-db628.hostinger.com/u523670221_Banco", "u523670221_general", "AGTT.MbdD3bpJ#d");
+            //se realiza la conexion mediante la dirección URL, integrada por el tipo de 
+            //controlador, la ubicación de la B.D., el usuario y la contraseña para ingresar
+        }
+        catch(SQLException e) //si existe algún error, esta parte lo captura y administra
+        {
+            JOptionPane.showMessageDialog(null, e.toString());//se muestra el error generado 
+        }
     }
 
     /**
@@ -35,8 +60,10 @@ public class Abonar extends javax.swing.JFrame {
         jTxtMonto = new javax.swing.JTextField();
         jTxtMotivo = new javax.swing.JTextField();
         jBtnAceptar = new javax.swing.JButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
+        jLabel1 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jMnbOpciones = new javax.swing.JMenuBar();
+        jMn1Menu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -65,46 +92,68 @@ public class Abonar extends javax.swing.JFrame {
                 jBtnAceptarMouseClicked(evt);
             }
         });
+        jBtnAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnAceptarActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Cliente:");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout jPnlAbonarLayout = new javax.swing.GroupLayout(jPnlAbonar);
         jPnlAbonar.setLayout(jPnlAbonarLayout);
         jPnlAbonarLayout.setHorizontalGroup(
             jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPnlAbonarLayout.createSequentialGroup()
-                .addContainerGap(154, Short.MAX_VALUE)
-                .addComponent(jBtnAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(144, 144, 144))
             .addGroup(jPnlAbonarLayout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLblMotivo, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
-                    .addComponent(jLblMonto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTxtMotivo, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
-                    .addComponent(jTxtMonto))
+                .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPnlAbonarLayout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPnlAbonarLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLblMotivo, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
+                            .addComponent(jLblMonto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTxtMotivo, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
+                            .addComponent(jTxtMonto))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPnlAbonarLayout.createSequentialGroup()
+                .addGap(0, 169, Short.MAX_VALUE)
+                .addComponent(jBtnAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(159, 159, 159))
         );
         jPnlAbonarLayout.setVerticalGroup(
             jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPnlAbonarLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
+                .addGap(39, 39, 39)
                 .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLblMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTxtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(33, 33, 33)
+                    .addComponent(jLabel1)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTxtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLblMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
                 .addGroup(jPnlAbonarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLblMotivo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTxtMotivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(72, 72, 72)
+                .addGap(46, 46, 46)
                 .addComponent(jBtnAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
 
-        jMenu1.setText("Opciones");
-        jMenu1.addActionListener(new java.awt.event.ActionListener() {
+        jMn1Menu.setText("Opciones");
+        jMn1Menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenu1ActionPerformed(evt);
+                jMn1MenuActionPerformed(evt);
             }
         });
 
@@ -114,11 +163,11 @@ public class Abonar extends javax.swing.JFrame {
                 jMenuItem1ActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        jMn1Menu.add(jMenuItem1);
 
-        jMenuBar1.add(jMenu1);
+        jMnbOpciones.add(jMn1Menu);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(jMnbOpciones);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -136,14 +185,12 @@ public class Abonar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBtnAceptarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtnAceptarMouseClicked
- VentanaAbonar ventana = new VentanaAbonar();
- ventana.setVisible(true);
- this.dispose();
+
     }//GEN-LAST:event_jBtnAceptarMouseClicked
 
-    private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
+    private void jMn1MenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMn1MenuActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jMenu1ActionPerformed
+    }//GEN-LAST:event_jMn1MenuActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
@@ -151,6 +198,63 @@ public class Abonar extends javax.swing.JFrame {
         verFormulario.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jBtnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAceptarActionPerformed
+
+        Monto = jTxtMonto.getText();
+        Motivo = jTxtMotivo.getText();
+        
+        if (Monto.isEmpty()) {
+          JOptionPane.showMessageDialog(null, "Motivo esta vacio");
+        }
+        else{
+            int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro que quieres abonar: "+Monto+" ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
+            
+            System.out.println(input);
+            
+            if (input == 0) {
+                        try
+                   {      
+                       int resultado;
+                       String sql;
+
+                       sql = "INSERT INTO `Movimientos` (`idMovimientos`, `idUsuarios`,`Tipo`, `descripcion`, `fecha`, `hora`, `cantidad`) "
+                               + "VALUES "
+                               + "(NULL, '2','Ingreso ', '"+Motivo+"', CURRENT_DATE, CURRENT_TIME, '"+Monto+"')";
+                       pst=conexion.prepareStatement(sql);
+
+                     resultado=pst.executeUpdate();
+                     if (resultado==1) 
+                     {
+                         JOptionPane.showMessageDialog(null,"El abono ha sido insertado correctamente");
+                         jTxtMonto.setText(null);
+                         jTxtMotivo.setText(null);
+                     }
+
+                     else
+                     {
+                         JOptionPane.showMessageDialog(null,"El abono No ha sido insertado"); 
+                     }
+
+
+                   }
+                   catch(SQLException e)
+                   {
+                       JOptionPane.showMessageDialog(null, e.toString());  
+                   }
+            }
+            
+                if(input ==1 )
+                   {
+                     jTxtMonto.setText(null);
+                     jTxtMotivo.setText(null);
+                     jTxtMonto.requestFocus();
+                     
+                   }
+               
+        }
+        
+    }//GEN-LAST:event_jBtnAceptarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -189,11 +293,13 @@ public class Abonar extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnAceptar;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLblMonto;
     private javax.swing.JLabel jLblMotivo;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenu jMn1Menu;
+    private javax.swing.JMenuBar jMnbOpciones;
     private javax.swing.JPanel jPnlAbonar;
     private javax.swing.JTextField jTxtMonto;
     private javax.swing.JTextField jTxtMotivo;
