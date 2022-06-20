@@ -4,17 +4,45 @@
  */
 package proyectoumnsh;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author glzgi
  */
 public class LogIn extends javax.swing.JFrame {
+    
+    private String usuario,contrasena; // varibles para el inicio de sesion
+    private ResultSet consulta; //variable que guardará el resultado de la consulta
+    private PreparedStatement pst; //variable que ejecutará las sentencias a la B.D.
+    private Connection conexion=null; //variable que llevará a cabo la conexión a la B.D.
+    private String genero; //variable que almacenará el caracter del género del alumno
+    private DefaultTableModel modelo = new DefaultTableModel();
 
     /**
      * Creates new form LogIn
      */
     public LogIn() {
         initComponents();
+        try //manejo de interrupciones
+        {
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            //se registra el controlador de MySql
+            conexion=DriverManager.getConnection("jdbc:mysql://auth-db628.hostinger.com/u523670221_Banco", "u523670221_general", "AGTT.MbdD3bpJ#d");
+            //se realiza la conexion mediante la dirección URL, integrada por el tipo de 
+            //controlador, la ubicación de la B.D., el usuario y la contraseña para ingresar
+        }
+        catch(SQLException e) //si existe algún error, esta parte lo captura y administra
+        {
+            JOptionPane.showMessageDialog(null, e.toString());//se muestra el error generado 
+        }
     }
 
     /**
@@ -29,7 +57,7 @@ public class LogIn extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLblUsuario = new javax.swing.JLabel();
         jLblPassword = new javax.swing.JLabel();
-        jTxtPassword = new javax.swing.JTextField();
+        jTxtUsuario = new javax.swing.JTextField();
         jPswPassword = new javax.swing.JPasswordField();
         jBtnEntrar = new javax.swing.JButton();
 
@@ -41,6 +69,12 @@ public class LogIn extends javax.swing.JFrame {
         jLblUsuario.setText("Usuario");
 
         jLblPassword.setText("Password");
+
+        jPswPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jPswPasswordActionPerformed(evt);
+            }
+        });
 
         jBtnEntrar.setText("Entrar");
         jBtnEntrar.addActionListener(new java.awt.event.ActionListener() {
@@ -62,7 +96,7 @@ public class LogIn extends javax.swing.JFrame {
                             .addComponent(jLblUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTxtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTxtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jPswPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(150, 150, 150)
@@ -74,7 +108,7 @@ public class LogIn extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(66, 66, 66)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTxtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTxtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLblUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -107,8 +141,49 @@ public class LogIn extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBtnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEntrarActionPerformed
-        // TODO add your handling code here:
+        // Probara la connecion con la base de datos:
+        try
+        {   
+            String sql;
+            
+            //coge los datos del formulario
+            usuario = jTxtUsuario.getText();
+            contrasena = String.valueOf(jPswPassword.getPassword());
+            
+            //valida que no esten vacios los datos
+            if (usuario.isEmpty() || contrasena.isEmpty() ) {
+                JOptionPane.showMessageDialog(null,"Hay valores vacios");
+            } else{
+                //se crea la sentecia mysql para insertar
+                sql = "SELECT * FROM Admin WHERE Usuario = '"+usuario+"' && Password = '"+contrasena+"';";
+                pst=conexion.prepareStatement(sql);
+                consulta=pst.executeQuery(); //se ejecuta la consulta a la B.D.
+                
+                //valida si existe el ususario y el pass
+                if (consulta.next() == false) {
+                    JOptionPane.showMessageDialog(null,"Usuario o contraseña incorrectas");
+                }else{
+                    Menu verFormulario = new Menu ();
+                    verFormulario.setVisible(true);
+                    this.setVisible(false);
+                    
+                }
+                
+                
+          
+            }
+          
+        }
+        catch(SQLException e)
+        {
+            JOptionPane.showMessageDialog(null, e.toString());  
+        }
+        
     }//GEN-LAST:event_jBtnEntrarActionPerformed
+
+    private void jPswPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPswPasswordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPswPasswordActionPerformed
 
     /**
      * @param args the command line arguments
@@ -151,6 +226,6 @@ public class LogIn extends javax.swing.JFrame {
     private javax.swing.JLabel jLblUsuario;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField jPswPassword;
-    private javax.swing.JTextField jTxtPassword;
+    private javax.swing.JTextField jTxtUsuario;
     // End of variables declaration//GEN-END:variables
 }
