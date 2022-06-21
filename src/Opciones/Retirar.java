@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import proyectoumnsh.Menu;
 
@@ -22,12 +24,26 @@ public class Retirar extends javax.swing.JFrame {
     private PreparedStatement pst; //variable que ejecutará las sentencias a la B.D.
     private Connection conexion=null; //variable que llevará a cabo la conexión a la B.D.
     private String genero; //variable que almacenará el caracter del género del alumno
-    private String Monto, Motivo;
+    private String Monto, Motivo,saldo;
+    private int seleccion;
     /**
      * Creates new form Retirar
      */
     public Retirar() {
         initComponents();
+        llenarComboBox();
+         try //manejo de interrupciones
+        {
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            //se registra el controlador de MySql
+            conexion=DriverManager.getConnection("jdbc:mysql://auth-db628.hostinger.com/u523670221_Banco", "u523670221_general", "AGTT.MbdD3bpJ#d");
+            //se realiza la conexion mediante la dirección URL, integrada por el tipo de 
+            //controlador, la ubicación de la B.D., el usuario y la contraseña para ingresar
+        }
+        catch(SQLException e) //si existe algún error, esta parte lo captura y administra
+        {
+            JOptionPane.showMessageDialog(null, e.toString());//se muestra el error generado 
+        }
     }
 
     /**
@@ -45,6 +61,8 @@ public class Retirar extends javax.swing.JFrame {
         jTxtMonto = new javax.swing.JTextField();
         jTxtMotivo = new javax.swing.JTextField();
         jBntAceptar = new javax.swing.JButton();
+        jLblCliente = new javax.swing.JLabel();
+        jCmbCliente = new javax.swing.JComboBox<>();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -76,6 +94,12 @@ public class Retirar extends javax.swing.JFrame {
             }
         });
 
+        jLblCliente.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLblCliente.setForeground(new java.awt.Color(255, 255, 255));
+        jLblCliente.setText("Cliente:");
+
+        jCmbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout jPnlRetirarLayout = new javax.swing.GroupLayout(jPnlRetirar);
         jPnlRetirar.setLayout(jPnlRetirarLayout);
         jPnlRetirarLayout.setHorizontalGroup(
@@ -83,35 +107,39 @@ public class Retirar extends javax.swing.JFrame {
             .addGroup(jPnlRetirarLayout.createSequentialGroup()
                 .addGroup(jPnlRetirarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPnlRetirarLayout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addGroup(jPnlRetirarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPnlRetirarLayout.createSequentialGroup()
-                                .addComponent(jLblMotivo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTxtMotivo, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPnlRetirarLayout.createSequentialGroup()
-                                .addComponent(jLblMonto)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTxtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPnlRetirarLayout.createSequentialGroup()
                         .addGap(149, 149, 149)
-                        .addComponent(jBntAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jBntAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPnlRetirarLayout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addGroup(jPnlRetirarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLblCliente)
+                            .addComponent(jLblMonto)
+                            .addComponent(jLblMotivo))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPnlRetirarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTxtMonto)
+                            .addComponent(jTxtMotivo)
+                            .addComponent(jCmbCliente, 0, 129, Short.MAX_VALUE))))
                 .addContainerGap(140, Short.MAX_VALUE))
         );
         jPnlRetirarLayout.setVerticalGroup(
             jPnlRetirarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPnlRetirarLayout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addGap(37, 37, 37)
+                .addGroup(jPnlRetirarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLblCliente)
+                    .addComponent(jCmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
                 .addGroup(jPnlRetirarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLblMonto)
                     .addComponent(jTxtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(33, 33, 33)
+                .addGap(27, 27, 27)
                 .addGroup(jPnlRetirarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLblMotivo)
                     .addComponent(jTxtMotivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(71, 71, 71)
+                .addGap(31, 31, 31)
                 .addComponent(jBntAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         jMenu1.setText("Opciones");
@@ -165,12 +193,24 @@ public class Retirar extends javax.swing.JFrame {
     private void jBntAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBntAceptarActionPerformed
         Monto = jTxtMonto.getText();
         Motivo = jTxtMotivo.getText();
-        
-        if (Monto.isEmpty()) {
-          JOptionPane.showMessageDialog(null, "Motivo esta vacio");
-        }
-        else{
-            int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro que quieres Retirar: "+Monto+" ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
+        seleccion = jCmbCliente.getSelectedIndex()+1;
+        String sql0;
+        int num=0,num2=0;
+               
+        sql0 = "SELECT SUM(cantidad)FROM Movimientos WHERE idUsuarios ="+seleccion+"";
+        System.out.println(sql0);
+                try{
+                    pst=conexion.prepareStatement(sql0);
+                    consulta=pst.executeQuery();
+                    
+                    if(consulta.next()){
+                        num = consulta.getInt(1);
+                        num2= Integer.parseInt(Monto);
+                        
+                        if(num2 > num){
+                            JOptionPane.showMessageDialog(null, "No dispones del saldo suficiente");
+                        }else{
+                            int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro que quieres retirar: "+Monto+" ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
             
             System.out.println(input);
             
@@ -180,22 +220,27 @@ public class Retirar extends javax.swing.JFrame {
                        int resultado;
                        String sql;
 
-                       sql = "INSERT INTO `Movimientos` (`idMovimientos`, `idUsuarios`, `motivo`, `fecha`, `hora`, `cantidad`) "
+                       sql = "INSERT INTO `Movimientos` (`idMovimientos`, `idUsuarios`,`Tipo`, `descripcion`, `fecha`, `hora`, `cantidad`) "
                                + "VALUES "
-                               + "(NULL, '2', '"+Motivo+"', CURRENT_DATE, CURRENT_TIME, '"+Monto+"')";
+                               + "(NULL, '"+seleccion+"','Egreso ', '"+Motivo+"', CURRENT_DATE, CURRENT_TIME, '-"+Monto+"')";
                        pst=conexion.prepareStatement(sql);
 
                      resultado=pst.executeUpdate();
                      if (resultado==1) 
                      {
-                         JOptionPane.showMessageDialog(null,"El abono ha sido insertado correctamente");
+                         pst=conexion.prepareStatement(sql0);
+                        consulta=pst.executeQuery();
+                        if(consulta.next()){
+                          JOptionPane.showMessageDialog(null,"El abono ha sido retirado correctamente, su nuevo saldo es: " 
+                                  + consulta.getInt(1));  
+                        }
                          jTxtMonto.setText(null);
                          jTxtMotivo.setText(null);
                      }
 
                      else
                      {
-                         JOptionPane.showMessageDialog(null,"El abono No ha sido insertado"); 
+                         JOptionPane.showMessageDialog(null,"Error"); 
                      }
 
 
@@ -205,16 +250,15 @@ public class Retirar extends javax.swing.JFrame {
                        JOptionPane.showMessageDialog(null, e.toString());  
                    }
             }
-            
-                if(input ==1 )
+                        }
+                            
+                    }
+                    
+                    
+                }catch(SQLException e)
                    {
-                     jTxtMonto.setText(null);
-                     jTxtMotivo.setText(null);
-                     jTxtMonto.requestFocus();
-                     
+                       JOptionPane.showMessageDialog(null, e.toString());  
                    }
-               
-        }
     }//GEN-LAST:event_jBntAceptarActionPerformed
 
     /**
@@ -254,6 +298,8 @@ public class Retirar extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBntAceptar;
+    private javax.swing.JComboBox<String> jCmbCliente;
+    private javax.swing.JLabel jLblCliente;
     private javax.swing.JLabel jLblMonto;
     private javax.swing.JLabel jLblMotivo;
     private javax.swing.JMenu jMenu1;
@@ -263,4 +309,36 @@ public class Retirar extends javax.swing.JFrame {
     private javax.swing.JTextField jTxtMonto;
     private javax.swing.JTextField jTxtMotivo;
     // End of variables declaration//GEN-END:variables
+
+    private void llenarComboBox() {
+        jCmbCliente.removeAllItems();
+        
+        try //manejo de interrupciones
+        {
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            //se registra el controlador de MySql
+            conexion=DriverManager.getConnection("jdbc:mysql://auth-db628.hostinger.com/u523670221_Banco", "u523670221_general", "AGTT.MbdD3bpJ#d");
+            //se realiza la conexion mediante la dirección URL, integrada por el tipo de 
+            //controlador, la ubicación de la B.D., el usuario y la contraseña para ingresar
+        }
+        catch(SQLException e) //si existe algún error, esta parte lo captura y administra
+        {
+            JOptionPane.showMessageDialog(null, e.toString());//se muestra el error generado 
+        }
+        
+        try {
+            pst=conexion.prepareStatement("SELECT * FROM Usuarios");
+            consulta=pst.executeQuery();
+            
+            while (consulta.next()){
+                //System.out.println( consulta.getInt(1));
+                jCmbCliente.addItem(Integer.toString(consulta.getInt(1)));
+            }
+            
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
+        
+        
+    }
 }

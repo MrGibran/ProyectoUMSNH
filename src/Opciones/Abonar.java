@@ -44,6 +44,7 @@ public class Abonar extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, e.toString());//se muestra el error generado 
         }
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
