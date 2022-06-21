@@ -5,6 +5,16 @@
  */
 package Opciones;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import proyectoumnsh.Menu;
 
 /**
@@ -12,12 +22,31 @@ import proyectoumnsh.Menu;
  * @author RONALDO
  */
 public class Consultar extends javax.swing.JFrame {
-
+    private Connection conexion=null; //variable que llevará a cabo la conexión a la B.D.
+    private ResultSet consulta; //variable que guardará el resultado de la consulta
+    private PreparedStatement pst; //variable que ejecutará las sentencias a la B.D.
+    private DefaultTableModel modelo = new DefaultTableModel();
+    //objeto que almacenará tanto la información como la estructura de la tabla
+    private boolean bandera=true;
+    //variable que identificará cuando dar de alta o modificar un registro
     /**
      * Creates new form Consultar
      */
     public Consultar() {
         initComponents();
+        try //manejo de interrupciones
+        {
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            //se registra el controlador de MySql
+            conexion=DriverManager.getConnection("jdbc:mysql://auth-db628.hostinger.com/u523670221_Banco", "u523670221_general", "AGTT.MbdD3bpJ#d");
+            //se realiza la conexion mediante la dirección URL, integrada por el tipo de 
+            //controlador, la ubicación de la B.D., el usuario y la contraseña para ingresar
+        }
+        catch(SQLException e) //si existe algún error, esta parte lo captura y administra
+        {
+            JOptionPane.showMessageDialog(null, e.toString());//se muestra el error generado 
+        }
+    
     }
 
     /**
@@ -34,12 +63,15 @@ public class Consultar extends javax.swing.JFrame {
         jChcId = new javax.swing.JCheckBox();
         jChcNombre = new javax.swing.JCheckBox();
         jChcApellidoPaterno = new javax.swing.JCheckBox();
-        jTxtId1 = new javax.swing.JTextField();
-        jTxtNombre1 = new javax.swing.JTextField();
+        jTxtId = new javax.swing.JTextField();
+        jTxtNombre = new javax.swing.JTextField();
         jTxtApellidoPaterno = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTblCliente = new javax.swing.JTable();
         jBtnBuscar = new javax.swing.JButton();
+        jLblSaldo = new javax.swing.JLabel();
+        jLblPorSaldo = new javax.swing.JLabel();
+        jBtnLimpiar = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -70,20 +102,20 @@ public class Consultar extends javax.swing.JFrame {
 
         jTblCliente.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Nombre", "Apellido Paterno", "Apellido Materno"
+                "ID", "Nombre", "Apellido Paterno", "Apellido Materno", "Edad", "Curp"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -94,12 +126,39 @@ public class Consultar extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTblCliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTblClienteMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTblCliente);
 
         jBtnBuscar.setBackground(new java.awt.Color(0, 51, 51));
         jBtnBuscar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jBtnBuscar.setForeground(new java.awt.Color(0, 51, 51));
         jBtnBuscar.setText("Buscar");
+        jBtnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnBuscarActionPerformed(evt);
+            }
+        });
+
+        jLblSaldo.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLblSaldo.setForeground(new java.awt.Color(255, 255, 255));
+        jLblSaldo.setText("Saldo:");
+
+        jLblPorSaldo.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLblPorSaldo.setForeground(new java.awt.Color(255, 255, 255));
+        jLblPorSaldo.setToolTipText("");
+
+        jBtnLimpiar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jBtnLimpiar.setForeground(new java.awt.Color(0, 51, 51));
+        jBtnLimpiar.setText("Limpiar");
+        jBtnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnLimpiarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPnlConsultarLayout = new javax.swing.GroupLayout(jPnlConsultar);
         jPnlConsultar.setLayout(jPnlConsultarLayout);
@@ -113,7 +172,7 @@ public class Consultar extends javax.swing.JFrame {
                             .addGroup(jPnlConsultarLayout.createSequentialGroup()
                                 .addComponent(jChcId)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTxtId1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jTxtId, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPnlConsultarLayout.createSequentialGroup()
                                 .addComponent(jChcApellidoPaterno)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -121,15 +180,20 @@ public class Consultar extends javax.swing.JFrame {
                             .addGroup(jPnlConsultarLayout.createSequentialGroup()
                                 .addComponent(jChcNombre)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTxtNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLblBuscar)))
-                    .addGroup(jPnlConsultarLayout.createSequentialGroup()
-                        .addGap(74, 74, 74)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jTxtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLblBuscar)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPnlConsultarLayout.createSequentialGroup()
                         .addGap(180, 180, 180)
-                        .addComponent(jBtnBuscar)))
-                .addContainerGap(111, Short.MAX_VALUE))
+                        .addComponent(jLblSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLblPorSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPnlConsultarLayout.createSequentialGroup()
+                        .addGap(121, 121, 121)
+                        .addComponent(jBtnBuscar)
+                        .addGap(68, 68, 68)
+                        .addComponent(jBtnLimpiar)))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         jPnlConsultarLayout.setVerticalGroup(
             jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -139,20 +203,26 @@ public class Consultar extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jChcId)
-                    .addComponent(jTxtId1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTxtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jChcNombre)
-                    .addComponent(jTxtNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTxtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jChcApellidoPaterno)
                     .addComponent(jTxtApellidoPaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(28, 28, 28)
-                .addComponent(jBtnBuscar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(77, 77, 77))
+                .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jBtnBuscar)
+                    .addComponent(jBtnLimpiar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLblSaldo)
+                    .addComponent(jLblPorSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         jMenu1.setText("Opciones");
@@ -189,6 +259,121 @@ public class Consultar extends javax.swing.JFrame {
         verFormulario.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jBtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBuscarActionPerformed
+                         
+                 
+        try
+        { 
+          String sql;
+          if (jChcId.isSelected()) //si está seleccionado se busca por ID  
+          {
+              pst=conexion.prepareStatement("select idUsuarios,nombre,Apellido_Paterno,Apellido_Materno,edad,curp from Usuarios where idUsuarios = ? ");
+              pst.setString(1,jTxtId.getText().trim());
+          }
+          if (jChcNombre.isSelected()) //si está seleccionado se busca por Nombre
+          {   
+              pst=conexion.prepareStatement("select idUsuarios,nombre,Apellido_Paterno,Apellido_Materno,edad,curp from Usuarios where Nombre = ? ");
+              pst.setString(2,jTxtNombre.getText().trim());
+              consulta=pst.executeQuery();//Se ejecuta la consola DB
+          }
+          if (jChcApellidoPaterno.isSelected()) //si está seleccionado se busca por Apellido Paterno
+          {   
+              pst=conexion.prepareStatement("select idUsuarios,nombre,Apellido_Paterno,Apellido_Materno,edad,curp from Usuarios where Apellido_Paterno = ? ");
+              pst.setString(3,jTxtApellidoPaterno.getText().trim());
+              consulta=pst.executeQuery();//Se ejecuta la consola DB
+          }
+             
+              
+          
+                  
+
+          consulta=pst.executeQuery(); //se ejecuta la consulta a la B.D.
+          
+          ResultSetMetaData metaDatos = consulta.getMetaData();
+          //se obtiene una instancia de los metadatos de la consulta para conocer el número de columnas y el nombre de las mismas
+          int numeroColumnas=metaDatos.getColumnCount();
+          //se asigna el número de las columnas
+          
+          Object[] etiquetas = new Object[numeroColumnas];
+          //declaración de un arreglo de objetos donde se almacenarán los nombres de las columnas
+          for (int i =0; i< numeroColumnas; i++)
+              etiquetas[i]=metaDatos.getColumnLabel(i+1); 
+              //asignación de cada uno de los nombres dentro del arreglo de objetos
+              
+          modelo.setColumnIdentifiers(etiquetas);  
+          //se establece en el modelo de la tabla los nombres de las etiquetas
+          
+          while (consulta.next()) //evaluación para moverse dentro los registros de la consulta
+          {
+              Object[] datosFila = new Object[modelo.getColumnCount()];
+              //se declara y crea el arreglo de objetos donde se guardarán los datos correspondientes a la consulta
+              for (int i =0; i<modelo.getColumnCount();i++)
+                  datosFila[i]=consulta.getObject(i+1);
+              modelo.addRow(datosFila); //se agrega la fila con la información al modelo
+              
+              jTblCliente.setModel(modelo);
+              //se asocia a la tabla alumnos el modelo de datos llenado anteriormente
+          }
+          //se limpian contenidos de los criterios y se inhabilitan los componentes
+  
+          jTxtNombre.setText("");
+          jTxtNombre.setEnabled(false);
+          jTxtId.setText("");
+          jTxtId.setEnabled(false);
+          jTxtApellidoPaterno.setText("");
+          jTxtApellidoPaterno.setEnabled(false);
+         
+           sql = ("SELECT SUM(cantidad) FROM `Movimientos`WHERE idUsuarios = 2");
+           pst=conexion.prepareStatement(sql);
+           consulta=pst.executeQuery();
+           
+           if(consulta.next()){
+            jLblPorSaldo.setText("$"+Integer.toString(consulta.getInt(1)));
+            }
+                  
+        
+        }
+        catch(SQLException e)
+        {
+            JOptionPane.showMessageDialog(null, e.toString());  
+        }
+    }//GEN-LAST:event_jBtnBuscarActionPerformed
+
+    private void jTblClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTblClienteMouseClicked
+     if(jTblCliente.getSelectedRow()!= -1)//se verifica que se haya seleccionado una columna de la tabla
+        {
+            String indice;
+            String codigo = String.valueOf(jTblCliente.getValueAt(jTblCliente.getSelectedRow(),0));
+            //se obtiene la matricula del alumno según la fila de la tabla que se haya seleccionado
+            try
+            {
+                pst=conexion.prepareStatement("select * from Info_Usuarios where idInfo_Usuarios = ? "); //se crea el Statement que permitirá hacer la consulta
+                pst.setString(1,codigo);
+                consulta=pst.executeQuery();
+                //se obtiene el registro del alumno
+                while (consulta.next())
+                {
+                    jTxtId.setText(consulta.getString(1));//se asigna el valor de la matricula
+                    jTxtNombre.setText(consulta.getString(2));//se asigna el valor del apellido paterno y nombre
+                    jTxtApellidoPaterno.setText(consulta.getString(3));                   
+                    indice=consulta.getString(7);//se obtiene el entero que representa la carrera
+                
+                }
+                bandera=false;//cambio de valor de la variable para que se pueda hacer la modificación del registro
+                jTxtId.setEnabled(false);//se deshabilita la matricula para poder hacer la consulta
+            }
+            catch(SQLException e)
+            {
+               JOptionPane.showMessageDialog(null, e.toString());  
+            }
+       }
+    }//GEN-LAST:event_jTblClienteMouseClicked
+
+    private void jBtnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnLimpiarActionPerformed
+
+      jTxtNombre.requestFocus();
+    }//GEN-LAST:event_jBtnLimpiarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -227,10 +412,13 @@ public class Consultar extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnBuscar;
+    private javax.swing.JButton jBtnLimpiar;
     private javax.swing.JCheckBox jChcApellidoPaterno;
     private javax.swing.JCheckBox jChcId;
     private javax.swing.JCheckBox jChcNombre;
     private javax.swing.JLabel jLblBuscar;
+    private javax.swing.JLabel jLblPorSaldo;
+    private javax.swing.JLabel jLblSaldo;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
@@ -238,7 +426,7 @@ public class Consultar extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTblCliente;
     private javax.swing.JTextField jTxtApellidoPaterno;
-    private javax.swing.JTextField jTxtId1;
-    private javax.swing.JTextField jTxtNombre1;
+    private javax.swing.JTextField jTxtId;
+    private javax.swing.JTextField jTxtNombre;
     // End of variables declaration//GEN-END:variables
 }
