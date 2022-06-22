@@ -217,10 +217,11 @@ public class Abonar extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jBtnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAceptarActionPerformed
-
+        String jCmb = (String) jCmbCliente.getSelectedItem();
         Monto = jTxtMonto.getText();
         Motivo = jTxtMotivo.getText();
-        seleccion = jCmbCliente.getSelectedIndex()+1;
+        //seleccion = jCmbCliente.getSelectedIndex()+1;
+        seleccion = Integer.parseInt(jCmb) ;
         
         System.out.println(seleccion);
         
@@ -238,9 +239,7 @@ public class Abonar extends javax.swing.JFrame {
                        int resultado;
                        String sql;
 
-                       sql = "INSERT INTO `Movimientos` (`idMovimientos`, `idUsuarios`,`Tipo`, `descripcion`, `fecha`, `hora`, `cantidad`) "
-                               + "VALUES "
-                               + "(NULL, '"+seleccion+"','Ingreso ', '"+Motivo+"', CURRENT_DATE, CURRENT_TIME, '"+Monto+"')";
+                       sql = "INSERT INTO Movimientos VALUES (NULL, "+seleccion+",'Ingreso ', '"+Motivo+"', CURRENT_DATE, CURRENT_TIME, '"+Monto+"')";
                        pst=conexion.prepareStatement(sql);
 
                      resultado=pst.executeUpdate();
