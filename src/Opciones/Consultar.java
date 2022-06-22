@@ -5,6 +5,7 @@
  */
 package Opciones;
 
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -29,11 +30,16 @@ public class Consultar extends javax.swing.JFrame {
     //objeto que almacenará tanto la información como la estructura de la tabla
     private boolean bandera=true;
     //variable que identificará cuando dar de alta o modificar un registro
+    String saldo;
     /**
      * Creates new form Consultar
      */
     public Consultar() {
         initComponents();
+        
+        jTxtNombre.setEnabled(false);
+        jTxtId.setEnabled(false);
+        jTxtApellidoPaterno.setEnabled(false);
         try //manejo de interrupciones
         {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
@@ -58,6 +64,7 @@ public class Consultar extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jBtgConsultar = new javax.swing.ButtonGroup();
         jPnlConsultar = new javax.swing.JPanel();
         jLblBuscar = new javax.swing.JLabel();
         jChcId = new javax.swing.JCheckBox();
@@ -71,7 +78,6 @@ public class Consultar extends javax.swing.JFrame {
         jBtnBuscar = new javax.swing.JButton();
         jLblSaldo = new javax.swing.JLabel();
         jLblPorSaldo = new javax.swing.JLabel();
-        jBtnLimpiar = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -86,19 +92,69 @@ public class Consultar extends javax.swing.JFrame {
         jLblBuscar.setText("Buscar");
 
         jChcId.setBackground(new java.awt.Color(0, 51, 51));
+        jBtgConsultar.add(jChcId);
         jChcId.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jChcId.setForeground(new java.awt.Color(255, 255, 255));
         jChcId.setText("ID");
+        jChcId.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jChcId.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jChcId.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jChcIdMouseClicked(evt);
+            }
+        });
+        jChcId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jChcIdActionPerformed(evt);
+            }
+        });
 
         jChcNombre.setBackground(new java.awt.Color(0, 51, 51));
+        jBtgConsultar.add(jChcNombre);
         jChcNombre.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jChcNombre.setForeground(new java.awt.Color(255, 255, 255));
         jChcNombre.setText("Nombre");
+        jChcNombre.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jChcNombre.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jChcNombreMouseClicked(evt);
+            }
+        });
 
         jChcApellidoPaterno.setBackground(new java.awt.Color(0, 51, 51));
+        jBtgConsultar.add(jChcApellidoPaterno);
         jChcApellidoPaterno.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jChcApellidoPaterno.setForeground(new java.awt.Color(255, 255, 255));
         jChcApellidoPaterno.setText("Apellido Paterno");
+        jChcApellidoPaterno.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jChcApellidoPaterno.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jChcApellidoPaternoMouseClicked(evt);
+            }
+        });
+
+        jTxtId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTxtIdActionPerformed(evt);
+            }
+        });
+        jTxtId.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtIdKeyTyped(evt);
+            }
+        });
+
+        jTxtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtNombreKeyTyped(evt);
+            }
+        });
+
+        jTxtApellidoPaterno.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtApellidoPaternoKeyTyped(evt);
+            }
+        });
 
         jTblCliente.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -151,15 +207,6 @@ public class Consultar extends javax.swing.JFrame {
         jLblPorSaldo.setForeground(new java.awt.Color(255, 255, 255));
         jLblPorSaldo.setToolTipText("");
 
-        jBtnLimpiar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jBtnLimpiar.setForeground(new java.awt.Color(0, 51, 51));
-        jBtnLimpiar.setText("Limpiar");
-        jBtnLimpiar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnLimpiarActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPnlConsultarLayout = new javax.swing.GroupLayout(jPnlConsultar);
         jPnlConsultar.setLayout(jPnlConsultarLayout);
         jPnlConsultarLayout.setHorizontalGroup(
@@ -168,61 +215,64 @@ public class Consultar extends javax.swing.JFrame {
                 .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPnlConsultarLayout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPnlConsultarLayout.createSequentialGroup()
+                                .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPnlConsultarLayout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(jChcId, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jTxtId, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPnlConsultarLayout.createSequentialGroup()
+                                        .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jChcNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jChcApellidoPaterno))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(jTxtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
+                                            .addComponent(jTxtApellidoPaterno))))
+                                .addGap(160, 160, 160))
                             .addGroup(jPnlConsultarLayout.createSequentialGroup()
-                                .addComponent(jChcId)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTxtId, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPnlConsultarLayout.createSequentialGroup()
-                                .addComponent(jChcApellidoPaterno)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTxtApellidoPaterno, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPnlConsultarLayout.createSequentialGroup()
-                                .addComponent(jChcNombre)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTxtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLblBuscar)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(190, 190, 190)
+                                .addComponent(jLblBuscar))))
                     .addGroup(jPnlConsultarLayout.createSequentialGroup()
                         .addGap(180, 180, 180)
                         .addComponent(jLblSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLblPorSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPnlConsultarLayout.createSequentialGroup()
-                        .addGap(121, 121, 121)
-                        .addComponent(jBtnBuscar)
-                        .addGap(68, 68, 68)
-                        .addComponent(jBtnLimpiar)))
+                        .addComponent(jLblPorSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(15, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPnlConsultarLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jBtnBuscar)
+                .addGap(203, 203, 203))
         );
         jPnlConsultarLayout.setVerticalGroup(
             jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPnlConsultarLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addContainerGap()
                 .addComponent(jLblBuscar)
-                .addGap(18, 18, 18)
+                .addGap(27, 27, 27)
                 .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jChcId)
                     .addComponent(jTxtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(8, 8, 8)
                 .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jChcNombre)
                     .addComponent(jTxtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jChcApellidoPaterno)
                     .addComponent(jTxtApellidoPaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28)
-                .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jBtnBuscar)
-                    .addComponent(jBtnLimpiar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(21, 21, 21)
+                .addComponent(jBtnBuscar)
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPnlConsultarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLblSaldo)
                     .addComponent(jLblPorSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         jMenu1.setText("Opciones");
@@ -268,26 +318,65 @@ public class Consultar extends javax.swing.JFrame {
           String sql;
           if (jChcId.isSelected()) //si está seleccionado se busca por ID  
           {
-              pst=conexion.prepareStatement("select idUsuarios,nombre,Apellido_Paterno,Apellido_Materno,edad,curp from Usuarios where idUsuarios = ? ");
+              pst=conexion.prepareStatement("select idUsuarios,nombre,apellido_paterno,apellido_materno,edad,curp from Usuarios where idUsuarios = ? ");
               pst.setString(1,jTxtId.getText().trim());
+              saldo = jTxtId.getText();
+              
+                sql = "SELECT SUM(cantidad) FROM `Movimientos`WHERE idUsuarios = "+saldo+"";
+                pst=conexion.prepareStatement(sql);
+                consulta=pst.executeQuery();
+
+                if(consulta.next()){
+                 jLblPorSaldo.setText("$"+Integer.toString(consulta.getInt(1)));
+                 }
+                
+            pst=conexion.prepareStatement("select idUsuarios,nombre,apellido_paterno,apellido_materno,edad,curp from Usuarios where idUsuarios = ? ");
+            pst.setString(1,jTxtId.getText().trim());
+              
           }
           if (jChcNombre.isSelected()) //si está seleccionado se busca por Nombre
           {   
-              pst=conexion.prepareStatement("select idUsuarios,nombre,Apellido_Paterno,Apellido_Materno,edad,curp from Usuarios where Nombre = ? ");
-              pst.setString(2,jTxtNombre.getText().trim());
-              consulta=pst.executeQuery();//Se ejecuta la consola DB
+             pst=conexion.prepareStatement("select idUsuarios,nombre,apellido_paterno,apellido_materno,edad,curp from Usuarios where nombre = '"+jTxtNombre.getText()+"'");
+             
+            consulta=pst.executeQuery();
+            int id = 0;
+              if(consulta.next())
+              {
+                  id = consulta.getInt(1);
+              }
+              sql = "SELECT SUM(cantidad) FROM `Movimientos`WHERE idUsuarios = "+id+"";
+                pst=conexion.prepareStatement(sql);
+                consulta=pst.executeQuery();
+
+                if(consulta.next())
+                {
+                 jLblPorSaldo.setText("$"+Integer.toString(consulta.getInt(1)));
+                }
+            pst=conexion.prepareStatement("select idUsuarios,nombre,apellido_paterno,apellido_materno,edad,curp from Usuarios where nombre = '"+jTxtNombre.getText()+"'");
           }
           if (jChcApellidoPaterno.isSelected()) //si está seleccionado se busca por Apellido Paterno
-          {   
-              pst=conexion.prepareStatement("select idUsuarios,nombre,Apellido_Paterno,Apellido_Materno,edad,curp from Usuarios where Apellido_Paterno = ? ");
-              pst.setString(3,jTxtApellidoPaterno.getText().trim());
-              consulta=pst.executeQuery();//Se ejecuta la consola DB
+          { 
+              
+             pst=conexion.prepareStatement("select idUsuarios,nombre,apellido_paterno,apellido_materno,edad,curp from Usuarios where apellido_paterno = '"+jTxtApellidoPaterno.getText()+"'");
+             
+            consulta=pst.executeQuery();
+            int ap = 0;
+              if(consulta.next())
+              {
+                  ap = consulta.getInt(1);
+              }
+              sql = "SELECT SUM(cantidad) FROM `Movimientos`WHERE idUsuarios = "+ap+"";
+                pst=conexion.prepareStatement(sql);
+                consulta=pst.executeQuery();
+              
+                if(consulta.next())
+                {
+                 jLblPorSaldo.setText("$"+Integer.toString(consulta.getInt(1)));
+                }
+                
+                pst=conexion.prepareStatement("select idUsuarios,nombre,apellido_paterno,apellido_materno,edad,curp from Usuarios where apellido_paterno = '"+jTxtApellidoPaterno.getText()+"'");
           }
              
-              
-          
-                  
-
           consulta=pst.executeQuery(); //se ejecuta la consulta a la B.D.
           
           ResultSetMetaData metaDatos = consulta.getMetaData();
@@ -316,23 +405,6 @@ public class Consultar extends javax.swing.JFrame {
               //se asocia a la tabla alumnos el modelo de datos llenado anteriormente
           }
           //se limpian contenidos de los criterios y se inhabilitan los componentes
-  
-          jTxtNombre.setText("");
-          jTxtNombre.setEnabled(false);
-          jTxtId.setText("");
-          jTxtId.setEnabled(false);
-          jTxtApellidoPaterno.setText("");
-          jTxtApellidoPaterno.setEnabled(false);
-         
-           sql = ("SELECT SUM(cantidad) FROM `Movimientos`WHERE idUsuarios = 2");
-           pst=conexion.prepareStatement(sql);
-           consulta=pst.executeQuery();
-           
-           if(consulta.next()){
-            jLblPorSaldo.setText("$"+Integer.toString(consulta.getInt(1)));
-            }
-                  
-        
         }
         catch(SQLException e)
         {
@@ -343,21 +415,21 @@ public class Consultar extends javax.swing.JFrame {
     private void jTblClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTblClienteMouseClicked
      if(jTblCliente.getSelectedRow()!= -1)//se verifica que se haya seleccionado una columna de la tabla
         {
-            String indice;
+            
             String codigo = String.valueOf(jTblCliente.getValueAt(jTblCliente.getSelectedRow(),0));
             //se obtiene la matricula del alumno según la fila de la tabla que se haya seleccionado
             try
             {
-                pst=conexion.prepareStatement("select * from Info_Usuarios where idInfo_Usuarios = ? "); //se crea el Statement que permitirá hacer la consulta
+                pst=conexion.prepareStatement("select * from Usuarios where idUsuarios = ? "); //se crea el Statement que permitirá hacer la consulta
                 pst.setString(1,codigo);
                 consulta=pst.executeQuery();
                 //se obtiene el registro del alumno
                 while (consulta.next())
                 {
                     jTxtId.setText(consulta.getString(1));//se asigna el valor de la matricula
-                    jTxtNombre.setText(consulta.getString(2));//se asigna el valor del apellido paterno y nombre
-                    jTxtApellidoPaterno.setText(consulta.getString(3));                   
-                    indice=consulta.getString(7);//se obtiene el entero que representa la carrera
+                    jTxtNombre.setText(consulta.getString(1));//se asigna el valor del apellido paterno y nombre
+                    jTxtApellidoPaterno.setText(consulta.getString(1));                   
+    
                 
                 }
                 bandera=false;//cambio de valor de la variable para que se pueda hacer la modificación del registro
@@ -370,10 +442,68 @@ public class Consultar extends javax.swing.JFrame {
        }
     }//GEN-LAST:event_jTblClienteMouseClicked
 
-    private void jBtnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnLimpiarActionPerformed
+    private void jTxtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtNombreKeyTyped
+  char letra = evt.getKeyChar();
+        if (Character.isLetter(letra)||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE||evt.getKeyChar()==KeyEvent.VK_SPACE) {
+            
+        }else{
+            evt.consume();
+            getToolkit().beep();
+        }
+    }//GEN-LAST:event_jTxtNombreKeyTyped
 
-      jTxtNombre.requestFocus();
-    }//GEN-LAST:event_jBtnLimpiarActionPerformed
+    private void jChcIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jChcIdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jChcIdActionPerformed
+
+    private void jChcIdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jChcIdMouseClicked
+        // TODO add your handling code here:
+        jTxtId.setEnabled(true);
+        jTxtNombre.setEnabled(false);
+        jTxtApellidoPaterno.setEnabled(false);
+        
+        jTxtNombre.setText(null);
+        jTxtApellidoPaterno.setText(null);
+    }//GEN-LAST:event_jChcIdMouseClicked
+
+    private void jTxtIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtIdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTxtIdActionPerformed
+
+    private void jChcNombreMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jChcNombreMouseClicked
+       jTxtNombre.setEnabled(true);
+       jTxtId.setEnabled(false);
+       jTxtApellidoPaterno.setEnabled(false);
+       
+       jTxtId.setText(null);
+       jTxtApellidoPaterno.setText(null);
+    }//GEN-LAST:event_jChcNombreMouseClicked
+
+    private void jChcApellidoPaternoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jChcApellidoPaternoMouseClicked
+        // TODO add your handling code here:
+         jTxtApellidoPaterno.setEnabled(true);
+         jTxtId.setEnabled(false);
+         jTxtNombre.setEnabled(false);
+         
+         jTxtNombre.setText(null);
+         jTxtId.setText(null);
+    }//GEN-LAST:event_jChcApellidoPaternoMouseClicked
+
+    private void jTxtApellidoPaternoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtApellidoPaternoKeyTyped
+        char letra = evt.getKeyChar();
+        if (Character.isLetter(letra)||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE||evt.getKeyChar()==KeyEvent.VK_SPACE) {
+            
+        }else{
+            evt.consume();
+            getToolkit().beep();
+        }
+    }//GEN-LAST:event_jTxtApellidoPaternoKeyTyped
+
+    private void jTxtIdKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtIdKeyTyped
+        char c = evt.getKeyChar();
+        
+        if(c<'0' || c>'9')evt.consume();
+    }//GEN-LAST:event_jTxtIdKeyTyped
 
     /**
      * @param args the command line arguments
@@ -411,8 +541,8 @@ public class Consultar extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup jBtgConsultar;
     private javax.swing.JButton jBtnBuscar;
-    private javax.swing.JButton jBtnLimpiar;
     private javax.swing.JCheckBox jChcApellidoPaterno;
     private javax.swing.JCheckBox jChcId;
     private javax.swing.JCheckBox jChcNombre;
