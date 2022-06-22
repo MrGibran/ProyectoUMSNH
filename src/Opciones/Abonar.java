@@ -97,6 +97,17 @@ public class Abonar extends javax.swing.JFrame {
             }
         });
 
+        jTxtMotivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTxtMotivoActionPerformed(evt);
+            }
+        });
+        jTxtMotivo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtMotivoKeyTyped(evt);
+            }
+        });
+
         jBtnAceptar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jBtnAceptar.setForeground(new java.awt.Color(0, 51, 51));
         jBtnAceptar.setText("Aceptar");
@@ -113,7 +124,7 @@ public class Abonar extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("N Cliente:");
+        jLabel1.setText("Nº de Cliente:");
 
         jCmbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -223,7 +234,7 @@ public class Abonar extends javax.swing.JFrame {
           JOptionPane.showMessageDialog(null, "Motivo esta vacio");
         }
         else{
-            int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro que quieres abonar: "+Monto+" ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
+            int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro que quieres abonar: $"+Monto+" ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
             
             //System.out.println(input);
             
@@ -241,7 +252,7 @@ public class Abonar extends javax.swing.JFrame {
                      resultado=pst.executeUpdate();
                      if (resultado==1) 
                      {
-                         JOptionPane.showMessageDialog(null,"El abono ha sido insertado correctamente");
+                         JOptionPane.showMessageDialog(null,"El abono ha sido insertado correctamente \n Gracias por abonar" );
                          jTxtMonto.setText(null);
                          jTxtMotivo.setText(null);
                      }
@@ -284,6 +295,20 @@ public class Abonar extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_jTxtMontoKeyTyped
+
+    private void jTxtMotivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtMotivoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTxtMotivoActionPerformed
+
+    private void jTxtMotivoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtMotivoKeyTyped
+       char letra = evt.getKeyChar();
+        if (Character.isLetter(letra)||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE||evt.getKeyChar()==KeyEvent.VK_SPACE) {
+            
+        }else{
+            evt.consume();
+            getToolkit().beep();
+        }
+    }//GEN-LAST:event_jTxtMotivoKeyTyped
 
     /**
      * @param args the command line arguments

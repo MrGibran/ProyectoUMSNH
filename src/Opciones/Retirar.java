@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package Opciones;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -80,6 +81,18 @@ public class Retirar extends javax.swing.JFrame {
         jLblMotivo.setForeground(new java.awt.Color(255, 255, 255));
         jLblMotivo.setText("Motivo:");
 
+        jTxtMonto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtMontoKeyTyped(evt);
+            }
+        });
+
+        jTxtMotivo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtMotivoKeyTyped(evt);
+            }
+        });
+
         jBntAceptar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jBntAceptar.setForeground(new java.awt.Color(0, 51, 51));
         jBntAceptar.setText("Aceptar");
@@ -96,7 +109,7 @@ public class Retirar extends javax.swing.JFrame {
 
         jLblCliente.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLblCliente.setForeground(new java.awt.Color(255, 255, 255));
-        jLblCliente.setText("Cliente:");
+        jLblCliente.setText("Nº de Cliente:");
 
         jCmbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -120,7 +133,7 @@ public class Retirar extends javax.swing.JFrame {
                             .addComponent(jTxtMonto)
                             .addComponent(jTxtMotivo)
                             .addComponent(jCmbCliente, 0, 129, Short.MAX_VALUE))))
-                .addContainerGap(140, Short.MAX_VALUE))
+                .addContainerGap(128, Short.MAX_VALUE))
         );
         jPnlRetirarLayout.setVerticalGroup(
             jPnlRetirarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,7 +223,7 @@ public class Retirar extends javax.swing.JFrame {
                         if(num2 > num){
                             JOptionPane.showMessageDialog(null, "No dispones del saldo suficiente");
                         }else{
-                            int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro que quieres retirar: "+Monto+" ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
+                            int input = JOptionPane.showConfirmDialog(null, "¿Estas seguro que quieres retirar: $"+Monto+" ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
             
             System.out.println(input);
             
@@ -231,7 +244,7 @@ public class Retirar extends javax.swing.JFrame {
                          pst=conexion.prepareStatement(sql0);
                         consulta=pst.executeQuery();
                         if(consulta.next()){
-                          JOptionPane.showMessageDialog(null,"El abono ha sido retirado correctamente, su nuevo saldo es: " 
+                          JOptionPane.showMessageDialog(null,"El abono ha sido retirado correctamente \n su nuevo saldo es:$ " 
                                   + consulta.getInt(1));  
                         }
                          jTxtMonto.setText(null);
@@ -260,6 +273,22 @@ public class Retirar extends javax.swing.JFrame {
                        JOptionPane.showMessageDialog(null, e.toString());  
                    }
     }//GEN-LAST:event_jBntAceptarActionPerformed
+
+    private void jTxtMontoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtMontoKeyTyped
+       char c = evt.getKeyChar();
+        
+        if(c<'0' || c>'9')evt.consume();
+    }//GEN-LAST:event_jTxtMontoKeyTyped
+
+    private void jTxtMotivoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtMotivoKeyTyped
+         char letra = evt.getKeyChar();
+        if (Character.isLetter(letra)||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE||evt.getKeyChar()==KeyEvent.VK_SPACE) {
+            
+        }else{
+            evt.consume();
+            getToolkit().beep();
+        }
+    }//GEN-LAST:event_jTxtMotivoKeyTyped
 
     /**
      * @param args the command line arguments
